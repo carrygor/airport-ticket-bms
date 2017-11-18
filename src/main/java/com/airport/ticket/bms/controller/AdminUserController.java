@@ -1,52 +1,39 @@
 package com.airport.ticket.bms.controller;
 
-import com.airport.ticket.bms.pointCut.AccessToken;
+import com.airport.ticket.bms.model.BaseResponse;
 import com.airport.ticket.bms.service.AdminUserService;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 
 @Controller()
-public class AdminUserController {
+public class AdminUserController extends SuperController{
 
     @Autowired
     private AdminUserService adminUserService;
 
+    @ExceptionHandler
+    @Override
+    public BaseResponse exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException {
+        return super.exceptionRealHandler(request,response,exception);
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
     @ResponseBody
-    public String login(@RequestBody String jsonStr){
+    public BaseResponse login(@RequestBody String jsonStr){
+        BaseResponse response = new BaseResponse();
         JSONObject object = JSONObject.fromObject(jsonStr);
         String username = object.getString("username");
         String password = object.getString("password");
-        return adminUserService.login(username,password);
+
+        response.setData(adminUserService.login(username,password));
+        return response;
     }
 
-
-    @AccessToken
-    @RequestMapping(value = "/getU", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
-    @ResponseBody
-    public String getUser(@RequestBody String jsonStr){
-        JSONObject object = JSONObject.fromObject(jsonStr);
-        String username = object.getString("username");
-        String password = object.getString("password");
-        String token = "";
-        try {
-            token = adminUserService.getToken(username,password);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject result = new JSONObject();
-        result.put("token",token);
-        return result.toString();
-    }
 }

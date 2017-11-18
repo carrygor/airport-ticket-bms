@@ -48,6 +48,7 @@ public class AccessTokenHandle {
             tokenException.setErrorMsg("找不到该用户！");
             throw tokenException;
         }
+        request.setAttribute("user", adminUser);
 
         String token = adminUserService.getToken(username,adminUser.getPassword());
 
