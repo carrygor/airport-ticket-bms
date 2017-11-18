@@ -136,4 +136,10 @@
       EMAIL = #{email,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="fetchAdminUserByUsername" resultMap="BaseResultMap">
+    SELECT * FROM admin_user WHERE USERNAME = #{username}
+  </select>
+  
+  
 </mapper>

@@ -1,6 +1,7 @@
 package com.airport.ticket.bms.controller;
 
 
+import com.airport.ticket.bms.pointCut.CheckToken;
 import com.airport.ticket.bms.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ public class UserController {
 
     @RequestMapping(value = "/getUser",method = RequestMethod.GET,produces = "text/json;charset=UTF-8")
     @ResponseBody
+    @CheckToken
     public String getUser(){
         System.out.println(userService.selectByPrimaryKey(1));
         return "hello world";

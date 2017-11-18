@@ -1,7 +1,10 @@
 package com.airport.ticket.bms.dao;
 
 import com.airport.ticket.bms.entity.AdminUser;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface AdminUserDao {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +17,6 @@ public interface AdminUserDao {
     int updateByPrimaryKeySelective(AdminUser record);
 
     int updateByPrimaryKey(AdminUser record);
+
+    AdminUser fetchAdminUserByUsername(@Param("username") String username);
 }

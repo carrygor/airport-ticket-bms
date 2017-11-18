@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.airport.ticket.bms.dao.FlightMessageDao">
+  <resultMap id="BaseResultMap" type="com.airport.ticket.bms.entity.FlightMessage">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="FLIGHT_TIME" jdbcType="TIMESTAMP" property="flightTime" />
+    <result column="COMPANY" jdbcType="VARCHAR" property="company" />
+    <result column="ORIGIN" jdbcType="VARCHAR" property="origin" />
+    <result column="DESTINATION" jdbcType="VARCHAR" property="destination" />
+    <result column="SEATS" jdbcType="INTEGER" property="seats" />
+    <result column="FLIGHT_PRICE" jdbcType="DECIMAL" property="flightPrice" />
+    <result column="STATUS" jdbcType="BIT" property="status" />
+    <result column="EXT_1" jdbcType="VARCHAR" property="ext1" />
+    <result column="EXT_2" jdbcType="INTEGER" property="ext2" />
+    <result column="INSERT_TIME" jdbcType="TIMESTAMP" property="insertTime" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, FLIGHT_TIME, COMPANY, ORIGIN, DESTINATION, SEATS, FLIGHT_PRICE, STATUS, EXT_1, 
+    EXT_2, INSERT_TIME, UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from flight_message
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from flight_message
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.airport.ticket.bms.entity.FlightMessage">
+    insert into flight_message (ID, FLIGHT_TIME, COMPANY, 
+      ORIGIN, DESTINATION, SEATS, 
+      FLIGHT_PRICE, STATUS, EXT_1, 
+      EXT_2, INSERT_TIME, UPDATE_TIME
+      )
+    values (#{id,jdbcType=INTEGER}, #{flightTime,jdbcType=TIMESTAMP}, #{company,jdbcType=VARCHAR}, 
+      #{origin,jdbcType=VARCHAR}, #{destination,jdbcType=VARCHAR}, #{seats,jdbcType=INTEGER}, 
+      #{flightPrice,jdbcType=DECIMAL}, #{status,jdbcType=BIT}, #{ext1,jdbcType=VARCHAR}, 
+      #{ext2,jdbcType=INTEGER}, #{insertTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.airport.ticket.bms.entity.FlightMessage">
+    insert into flight_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="flightTime != null">
+        FLIGHT_TIME,
+      </if>
+      <if test="company != null">
+        COMPANY,
+      </if>
+      <if test="origin != null">
+        ORIGIN,
+      </if>
+      <if test="destination != null">
+        DESTINATION,
+      </if>
+      <if test="seats != null">
+        SEATS,
+      </if>
+      <if test="flightPrice != null">
+        FLIGHT_PRICE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="ext1 != null">
+        EXT_1,
+      </if>
+      <if test="ext2 != null">
+        EXT_2,
+      </if>
+      <if test="insertTime != null">
+        INSERT_TIME,
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="flightTime != null">
+        #{flightTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="company != null">
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null">
+        #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="destination != null">
+        #{destination,jdbcType=VARCHAR},
+      </if>
+      <if test="seats != null">
+        #{seats,jdbcType=INTEGER},
+      </if>
+      <if test="flightPrice != null">
+        #{flightPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="ext1 != null">
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        #{ext2,jdbcType=INTEGER},
+      </if>
+      <if test="insertTime != null">
+        #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.airport.ticket.bms.entity.FlightMessage">
+    update flight_message
+    <set>
+      <if test="flightTime != null">
+        FLIGHT_TIME = #{flightTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="company != null">
+        COMPANY = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null">
+        ORIGIN = #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="destination != null">
+        DESTINATION = #{destination,jdbcType=VARCHAR},
+      </if>
+      <if test="seats != null">
+        SEATS = #{seats,jdbcType=INTEGER},
+      </if>
+      <if test="flightPrice != null">
+        FLIGHT_PRICE = #{flightPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=BIT},
+      </if>
+      <if test="ext1 != null">
+        EXT_1 = #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null">
+        EXT_2 = #{ext2,jdbcType=INTEGER},
+      </if>
+      <if test="insertTime != null">
+        INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.airport.ticket.bms.entity.FlightMessage">
+    update flight_message
+    set FLIGHT_TIME = #{flightTime,jdbcType=TIMESTAMP},
+      COMPANY = #{company,jdbcType=VARCHAR},
+      ORIGIN = #{origin,jdbcType=VARCHAR},
+      DESTINATION = #{destination,jdbcType=VARCHAR},
+      SEATS = #{seats,jdbcType=INTEGER},
+      FLIGHT_PRICE = #{flightPrice,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=BIT},
+      EXT_1 = #{ext1,jdbcType=VARCHAR},
+      EXT_2 = #{ext2,jdbcType=INTEGER},
+      INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="fetchAllFlightMessage" resultMap="BaseResultMap">
+    SELECT * FROM flight_message
+  </select>
+
+    <select id="fetchPageFlightMessage" resultMap="BaseResultMap">
+        SELECT * FROM flight_message limit #{startNo},#{pageSize}
+    </select>
+
+    <select id="totalMessage" resultType="int">
+        SELECT COUNT(*) FROM flight_message
+    </select>
+
+  <select id="searchFlightMessage" resultMap="BaseResultMap">
+    SELECT * FROM flight_message WHERE COMPANY LIKE #{company}
+  </select>
+
+</mapper>
