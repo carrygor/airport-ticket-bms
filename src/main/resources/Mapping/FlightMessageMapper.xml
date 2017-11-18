@@ -188,7 +188,13 @@
     </select>
 
   <select id="searchFlightMessage" resultMap="BaseResultMap">
-    SELECT * FROM flight_message WHERE COMPANY LIKE #{company}
+    SELECT * FROM flight_message
+      WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date}
   </select>
+
+    <select id="searchTotalMessage" resultType="int">
+        SELECT COUNT(*) FROM flight_message
+        WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date}
+    </select>
 
 </mapper>

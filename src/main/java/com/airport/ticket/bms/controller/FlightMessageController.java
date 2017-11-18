@@ -1,49 +1,36 @@
 package com.airport.ticket.bms.controller;
 
-
-import com.airport.ticket.bms.dao.FlightMessageDao;
-import com.airport.ticket.bms.entity.FlightMessage;
-import com.airport.ticket.bms.util.JsonDateValueProcessor;
-import net.sf.json.JSONArray;
+import com.airport.ticket.bms.pointCut.AccessToken;
+import com.airport.ticket.bms.service.FlightMessageService;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsonValueProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Authod fym
  * 关于航班信息的控制器
  */
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 public class FlightMessageController {
 
     @Autowired
-    private FlightMessageDao flightMessageDao;
+    private FlightMessageService flightMessageService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlightMessageController.class);
 
     /**
-     * 获取所有的航班信息
+     * 获取每一页的航班信息
      * @return
      */
     @RequestMapping(value = "/pageMessage", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
     @ResponseBody
-    public String fetchAllMessage(@RequestBody String reqJson){
-
-        List<FlightMessage> messages = null;
+    @AccessToken
+    public String fetchPageMessage(@RequestBody String reqJson){
 
         boolean isLegal = false;
         int pageNo = 0,pageSize = 0;
@@ -70,22 +57,22 @@ public class FlightMessageController {
             return result.toString();
         }
 
-        int totalPage = flightMessageDao.totalMessage();
-        messages = flightMessageDao.fetchPageFlightMessage((pageNo - 1) * pageSize,pageSize);
+        return flightMessageService.fetchPageMessage(pageNo,pageSize);
+    }
 
-        Map<String,List<FlightMessage>> map = new HashMap<String, List<FlightMessage>>();
 
-        map.put("data",messages);
+    @RequestMapping(value = "/searchMessage",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @ResponseBody
+//    @AccessToken
+    public String searchFlightMessage(@RequestBody String reqJson){
+        JSONObject object = JSONObject.fromObject(reqJson);
 
-        JsonConfig config = new JsonConfig();
-        JsonValueProcessor jsonValueProcessor = new JsonDateValueProcessor("yyyy-MM-dd HH:mm:ss");
-        config.registerJsonValueProcessor(Date.class, jsonValueProcessor);
+        String company = object.containsKey("company")? "%"+object.getString("company")+ "%": "%" ;
+        String origin = object.containsKey("origin") ? "%"+object.getString("origin")+"%": "%";
+        String destination = object.containsKey("destination")? "%"+ object.getString("destination") + "%":"%";
+        String date = object.containsKey("date")? object.getString("date")+"%":"%";
 
-        JSONObject object = new JSONObject();
-        object.put("totalPage",totalPage);
-        object.putAll(map,config);
-
-        return object.toString();
+        return flightMessageService.searchFlightMessage(company,origin,destination,date);
     }
 
 }
