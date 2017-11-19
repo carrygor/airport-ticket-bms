@@ -31,7 +31,7 @@ import java.util.Map;
  * 关于航班信息的控制器
  */
 
-@Controller
+@Controller("/flight")
 public class FlightMessageController extends SuperController{
 
     @Autowired
