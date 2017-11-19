@@ -1,5 +1,6 @@
 package com.airport.ticket.bms.service.Imp;
 
+import com.airport.ticket.bms.ExceptionGMS.SystemException;
 import com.airport.ticket.bms.dao.AdminUserDao;
 import com.airport.ticket.bms.entity.AdminUser;
 import com.airport.ticket.bms.service.AdminUserService;
@@ -15,6 +16,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class AdminUserServiceImp implements AdminUserService {
@@ -24,41 +27,33 @@ public class AdminUserServiceImp implements AdminUserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminUserService.class);
 
-    public String login(String username, String password) {
+    public Map<String,Object> login(String username, String password) throws Exception{
 
         AdminUser adminUser = adminUserDao.fetchAdminUserByUsername(username);
 
-        JSONObject result = new JSONObject();
+        Map<String,Object> map  = new HashMap<String,Object>();
+
         if (adminUser != null && adminUser.getPassword().equals(password)){
 
-            MessageDigest md5 = null;
-            String token ;
+            String token = "";
             try {
                 token = this.getToken(username,password);
-                result.put("resultCode","1");
-                result.put("msg","检验成功！");
-                result.put("token",token);
-                return result.toString();
+                map.put("token",token);
+                map.put("msg","登陆成功！");
+                return map;
 
-            } catch (NoSuchAlgorithmException e) {
+            } catch (Exception e) {
                 LOGGER.debug(e.getMessage());
-                e.printStackTrace();
-                result.put("msg","致命错误！");
-                result.put("resultCode","-1");
-                return result.toString();
-            } catch (UnsupportedEncodingException e) {
-                LOGGER.debug(e.getMessage());
-                e.printStackTrace();
-                result.put("resultCode","-1");
-                result.put("msg","致命错误！");
-                return result.toString();
+                SystemException se = new SystemException();
+                se.setErrCode(-1);
+                se.setErrMsg("获取token失败！");
+                throw se;
             }
 
         } else {
-            result.put("resultCode","0");
-            result.put("msg","检验失败！");
+            map.put("msg","检验失败！");
         }
-        return result.toString();
+        return map;
     }
 
 

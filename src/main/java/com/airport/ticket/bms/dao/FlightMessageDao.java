@@ -26,5 +26,7 @@ public interface FlightMessageDao {
 
     List<FlightMessage> searchFlightMessage(@Param("company")String company,@Param("origin")String origin,@Param("destination") String destination,@Param("date")String date);
 
+    int searchTotalMessage(@Param("company")String company,@Param("origin")String origin,@Param("destination") String destination,@Param("date")String date);
+
     int totalMessage();
 }

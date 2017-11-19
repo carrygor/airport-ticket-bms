@@ -56,8 +56,8 @@ public class CheckTokenHandle implements MethodInterceptor {
 
         if ("".equals(token) || !token.equals(reqToken)){
             TokenException tokenException = new TokenException();
-            tokenException.setErrorMsg("token不存在或者不可用！");
-            tokenException.setResultCode(-1);
+            tokenException.setErrMsg("token不存在或者不可用！");
+            tokenException.setErrCode(-1);
             throw tokenException;
         }
 

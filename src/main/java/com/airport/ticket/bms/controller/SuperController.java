@@ -1,6 +1,9 @@
 package com.airport.ticket.bms.controller;
 
 
+import com.airport.ticket.bms.Enum.ExceptionEnum;
+import com.airport.ticket.bms.Enum.KeyEnum;
+import com.airport.ticket.bms.ExceptionGMS.BaseException;
 import com.airport.ticket.bms.entity.AdminUser;
 import com.airport.ticket.bms.model.BaseResponse;
 import org.slf4j.Logger;
@@ -38,15 +41,26 @@ public abstract class SuperController {
         //exception
 
         LOGGER.error("统一异常处理：", exception);
-        response.setHeader("errmsg", baseResponse.getErrMsg());
-        response.setIntHeader("errcode", baseResponse.getErrCode());
+
+
+        if (exception instanceof BaseException){
+            BaseException baseException = (BaseException) exception;
+            baseResponse.setErrCode(baseException.getErrCode());
+            baseResponse.setErrMsg(baseException.getErrMsg());
+        } else {
+            baseResponse.setErrMsg(exception.getClass().getName());
+            baseResponse.setErrCode(-1001);
+        }
+
+        response.setHeader(KeyEnum.ERROR_MSG.getValue(), baseResponse.getErrMsg());
+        response.setIntHeader(KeyEnum.ERROR_CODE.getValue(), baseResponse.getErrCode());
         return baseResponse;
     }
 
 
 
     protected AdminUser getAdminUser(HttpServletRequest request) {
-        return (AdminUser) request.getAttribute("user");
+        return (AdminUser) request.getAttribute(KeyEnum.USER.getValue());
     }
 
 }
