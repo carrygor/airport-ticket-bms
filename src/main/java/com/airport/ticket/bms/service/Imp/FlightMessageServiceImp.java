@@ -1,16 +1,16 @@
 package com.airport.ticket.bms.service.Imp;
 
+import com.airport.ticket.bms.Enum.KeyEnum;
+import com.airport.ticket.bms.ExceptionGMS.SystemException;
 import com.airport.ticket.bms.dao.FlightMessageDao;
 import com.airport.ticket.bms.entity.FlightMessage;
 import com.airport.ticket.bms.service.FlightMessageService;
-import com.airport.ticket.bms.util.JsonDateValueProcessor;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsonValueProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,42 +21,68 @@ public class FlightMessageServiceImp implements FlightMessageService{
     @Autowired
     private FlightMessageDao flightMessageDao;
 
-    public String fetchPageMessage(int pageNo, int pageSize) {
+    public Map<String,Object> fetchPageMessage(int pageNo, int pageSize) throws Exception {
 
         List<FlightMessage> messages = null;
 
-        int totalPage = flightMessageDao.totalMessage();
-        messages = flightMessageDao.fetchPageFlightMessage((pageNo - 1) * pageSize,pageSize);
+        int totalPage = 0;
+        try {
+            totalPage = flightMessageDao.totalMessage();
+            messages = flightMessageDao.fetchPageFlightMessage((pageNo - 1) * pageSize,pageSize);
+        } catch (Exception e){
+            SystemException systemException = new SystemException();
+            systemException.setErrCode(2);
+            systemException.setErrMsg("数据库查询错误！");
+            throw systemException;
+        }
 
-
-        JSONObject object = listToJSON(messages);
-        object.put("totalPage",totalPage);
-        return object.toString();
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("total",totalPage);
+        map.put("list",messages);
+        return map;
     }
 
-    public String searchFlightMessage(String company, String origin, String destination, String date) {
+    public Map<String,Object> searchFlightMessage(String company, String origin, String destination, String date) throws Exception{
 
-        List<FlightMessage> messages = flightMessageDao.searchFlightMessage(company,origin,destination,date);
-        JSONObject object = listToJSON(messages);
-        int totalPage = flightMessageDao.searchTotalMessage(company,origin,destination,date);
-        object.put("totalPage",totalPage);
+        List<FlightMessage> messages = null;
+        int totalPage = 0;
 
-        return object.toString();
+        try {
+            messages = flightMessageDao.searchFlightMessage(company,origin,destination,date);
+            totalPage = flightMessageDao.searchTotalMessage(company,origin,destination,date);
+        } catch (Exception e){
+            SystemException systemException = new SystemException();
+            systemException.setErrCode(2);
+            systemException.setErrMsg("数据库查询错误！");
+            throw systemException;
+        }
 
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("total",totalPage);
+        map.put("list",messages);
+        return map;
     }
 
-    private JSONObject listToJSON(List<FlightMessage> messages){
-        Map<String,List<FlightMessage>> map = new HashMap<String, List<FlightMessage>>();
 
-        map.put("data",messages);
+    @Transactional(rollbackFor=Exception.class)
+    public boolean addFlightMessage(JSONArray array) throws Exception {
 
-        JsonConfig config = new JsonConfig();
-        JsonValueProcessor jsonValueProcessor = new JsonDateValueProcessor("yyyy-MM-dd HH:mm:ss");
-        config.registerJsonValueProcessor(Date.class, jsonValueProcessor);
+        JSONObject object = null;
 
-        JSONObject object = new JSONObject();
-        object.putAll(map,config);
+        for (int i=0;i<array.size();i++){
+            String messageStr = array.getString(i);
+            object = JSONObject.fromObject(messageStr);
+//            if (!object.containsKey(KeyEnum.COMPANY.getValue()) || !object.containsKey(KeyEnum.INSERT_MESSAGES.getValue()))
+        }
 
-        return object;
+        int isSuccess = -1;
+//        for (FlightMessage message:messages){
+//            isSuccess = flightMessageDao.insert(message);
+//        }
+
+        System.out.println();
+        return isSuccess == 0 ? false :true;
     }
+
+
 }
