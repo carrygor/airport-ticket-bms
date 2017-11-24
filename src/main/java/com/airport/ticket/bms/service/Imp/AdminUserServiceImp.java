@@ -1,23 +1,30 @@
 package com.airport.ticket.bms.service.Imp;
 
+import com.airport.ticket.bms.Enum.KeyEnum;
 import com.airport.ticket.bms.ExceptionGMS.SystemException;
 import com.airport.ticket.bms.dao.AdminUserDao;
 import com.airport.ticket.bms.entity.AdminUser;
+import com.airport.ticket.bms.form.adminUser.AdminUserForm;
 import com.airport.ticket.bms.service.AdminUserService;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AdminUserServiceImp implements AdminUserService {
@@ -54,6 +61,124 @@ public class AdminUserServiceImp implements AdminUserService {
             map.put("msg","检验失败！");
         }
         return map;
+    }
+
+
+    public Map<String,Object> fetchPageAdminUser(int pageNo, int pageSize) throws Exception {
+
+        List<AdminUser> users = null;
+
+        int totalPage = 0;
+        try {
+            totalPage = adminUserDao.totalUser();
+            users = adminUserDao.fetchPageAdminUser((pageNo - 1) * pageSize,pageSize);
+        } catch (Exception e){
+            SystemException systemException = new SystemException();
+            systemException.setErrCode(2);
+            systemException.setErrMsg("数据库查询错误！");
+            throw systemException;
+        }
+
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("total",totalPage);
+        map.put("list",users);
+        return map;
+    }
+
+    public Map<String,Object> searchAdminUser(String name, String wordId, String level) throws Exception{
+
+        List<AdminUser> messages = null;
+        int totalPage = 0;
+
+        try {
+            messages = adminUserDao.searchAdminUser(name,name,level);
+        } catch (Exception e){
+            SystemException systemException = new SystemException();
+            systemException.setErrCode(2);
+            systemException.setErrMsg("数据库查询错误！");
+            throw systemException;
+        }
+
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("total",totalPage);
+        map.put("list",messages);
+        return map;
+    }
+
+
+    @Transactional(rollbackFor=Exception.class)
+    public boolean addAdminUser(JSONArray array) throws Exception {
+
+        JSONObject object = null;
+        List<AdminUser> users = new ArrayList<AdminUser>();
+
+        int count = adminUserDao.totalUser();
+        for (int i=0;i<array.size();i++){
+            String userStr = array.getString(i);
+            object = JSONObject.fromObject(userStr);
+
+            if (!object.containsKey(KeyEnum.USER_REALNAME.getValue()) || !object.containsKey(KeyEnum.USER_PASSWORD.getValue()) ||
+                    !object.containsKey(KeyEnum.NAME.getValue()) || !object.containsKey(KeyEnum.USER_PHONE.getValue()) ||
+                    !object.containsKey(KeyEnum.USER_EMAIL.getValue())){
+                SystemException se = new SystemException();
+                se.setErrCode(3);
+                se.setErrMsg("参数错误！");
+                throw  se;
+            }
+
+            //加上对是否有该成员的判断
+            //to do
+            AdminUser user = adminUserDao.fetchAdminUserByUsername(object.getString(KeyEnum.NAME.getValue()));
+            if (user != null){
+                SystemException se = new SystemException();
+                se.setErrCode(3);
+                se.setErrMsg("已存在该成员！");
+                throw  se;
+            }
+
+
+            AdminUser adminUser = new AdminUser();
+            adminUser.setUsername(object.getString(KeyEnum.NAME.getValue()));
+            adminUser.setRealname(object.getString(KeyEnum.USER_REALNAME.getValue()));
+            adminUser.setPassword(object.getString(KeyEnum.USER_PASSWORD.getValue()));
+            adminUser.setWorkId(10000+count++);
+            adminUser.setPhone(object.getString(object.getString(KeyEnum.USER_PHONE.getValue())));
+            adminUser.setEmail(object.getString(object.getString(KeyEnum.USER_EMAIL.getValue())));
+
+            users.add(user);
+
+
+        }
+
+        int isSuccess = 1;
+        for (AdminUser message:users){
+            isSuccess = adminUserDao.insert(message);
+        }
+        return isSuccess == 1 ? true :false;
+    }
+
+    public boolean updateAdminUser(AdminUser user) throws Exception{
+        return adminUserDao.updateByPrimaryKeySelective(user) == 1 ? true:false;
+    }
+
+    public boolean updateAdminUser(AdminUserForm form) throws Exception{
+        AdminUser user = new AdminUser();
+        user.setId(form.getId());
+        user.setEmail(form.getEmail());
+        user.setPhone(form.getPhone());
+        user.setWorkId(form.getWorkId());
+        user.setPassword(form.getPassword());
+        user.setRealname(form.getRealName());
+        user.setUsername(form.getUsername());
+        user.setLevel(form.isLevel());
+        user.setStatus(form.isStatus());
+
+        return adminUserDao.updateByPrimaryKeySelective(user) == 1 ? true:false;
+
+    }
+
+    public AdminUser fetchAdminUserByKey(int key) throws Exception{
+        return adminUserDao.selectByPrimaryKey(key);
     }
 
 

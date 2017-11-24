@@ -16,7 +16,24 @@ public enum  KeyEnum {
     DESTINATION("destination"),
     SEATS("seats"),
     FLIGHT_PRICE("price"),
-    FLIGHT_TIME("flight_time");
+    FLIGHT_TIME("flight_time"),
+    RESIDUAL_SEATS("residual_seats"),
+
+    NAME("name"),
+    COMPANY_PHONE("phone"),
+    COMPANY_EMAIL("email"),
+    COMPANY_ADDRESS("address"),
+
+    USER_REALNAME("real_name"),
+    USER_PASSWORD("password"),
+    USER_PHONE("phone"),
+    USER_EMAIL("email"),
+
+    ID_CARD("id_card"),
+    HOUSEHOLD_RESGFITER("household_register"),
+    STATUS("status"),
+
+    ;
 
     private String value;
     KeyEnum(String value){

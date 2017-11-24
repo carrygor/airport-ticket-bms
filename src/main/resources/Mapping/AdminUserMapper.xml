@@ -140,6 +140,19 @@
   <select id="fetchAdminUserByUsername" resultMap="BaseResultMap">
     SELECT * FROM admin_user WHERE USERNAME = #{username}
   </select>
+
+  <select id="searchAdminUser" resultMap="BaseResultMap">
+    SELECT * FROM admin_user WHERE USERNAME LIKE #{name} AND WORK_ID LIKE #{word_id} AND LEVEL LIKE #{level}
+  </select>
+
+  <select id="totalUser" resultType="int">
+    SELECT COUNT(*) FROM admin_user
+  </select>
+
+  <select id="fetchPageAdminUser" resultMap="BaseResultMap">
+    SELECT * FROM admin_user limit #{startNo},#{pageSize}
+  </select>
+
   
   
 </mapper>

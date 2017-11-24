@@ -11,16 +11,16 @@
     <result column="FLIGHT_PRICE" jdbcType="DECIMAL" property="flightPrice" />
     <result column="STATUS" jdbcType="BIT" property="status" />
     <result column="EXT_1" jdbcType="VARCHAR" property="ext1" />
-    <result column="EXT_2" jdbcType="INTEGER" property="ext2" />
+    <result column="RESIDUAL_SEATS" jdbcType="INTEGER" property="residualSeats" />
     <result column="INSERT_TIME" jdbcType="TIMESTAMP" property="insertTime" />
     <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, FLIGHT_TIME, COMPANY, ORIGIN, DESTINATION, SEATS, FLIGHT_PRICE, STATUS, EXT_1, 
-    EXT_2, INSERT_TIME, UPDATE_TIME
+    ID, FLIGHT_TIME, COMPANY, ORIGIN, DESTINATION, SEATS, FLIGHT_PRICE, STATUS, EXT_1,
+    RESIDUAL_SEATS, INSERT_TIME, UPDATE_TIME
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from flight_message
     where ID = #{id,jdbcType=INTEGER}
@@ -30,16 +30,16 @@
     where ID = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.airport.ticket.bms.entity.FlightMessage">
-    insert into flight_message (ID, FLIGHT_TIME, COMPANY, 
-      ORIGIN, DESTINATION, SEATS, 
-      FLIGHT_PRICE, STATUS, EXT_1, 
-      EXT_2, INSERT_TIME, UPDATE_TIME
-      )
-    values (#{id,jdbcType=INTEGER}, #{flightTime,jdbcType=TIMESTAMP}, #{company,jdbcType=VARCHAR}, 
-      #{origin,jdbcType=VARCHAR}, #{destination,jdbcType=VARCHAR}, #{seats,jdbcType=INTEGER}, 
-      #{flightPrice,jdbcType=DECIMAL}, #{status,jdbcType=BIT}, #{ext1,jdbcType=VARCHAR}, 
-      #{ext2,jdbcType=INTEGER}, #{insertTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into flight_message (ID, FLIGHT_TIME, COMPANY,
+    ORIGIN, DESTINATION, SEATS,
+    FLIGHT_PRICE, STATUS, EXT_1,
+    RESIDUAL_SEATS, INSERT_TIME, UPDATE_TIME
+    )
+    values (#{id,jdbcType=INTEGER}, #{flightTime,jdbcType=TIMESTAMP}, #{company,jdbcType=VARCHAR},
+    #{origin,jdbcType=VARCHAR}, #{destination,jdbcType=VARCHAR}, #{seats,jdbcType=INTEGER},
+    #{flightPrice,jdbcType=DECIMAL}, #{status,jdbcType=BIT}, #{ext1,jdbcType=VARCHAR},
+    #{residualSeats,jdbcType=INTEGER}, #{insertTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.airport.ticket.bms.entity.FlightMessage">
     insert into flight_message
@@ -71,8 +71,8 @@
       <if test="ext1 != null">
         EXT_1,
       </if>
-      <if test="ext2 != null">
-        EXT_2,
+      <if test="residualSeats != null">
+        RESIDUAL_SEATS,
       </if>
       <if test="insertTime != null">
         INSERT_TIME,
@@ -109,8 +109,8 @@
       <if test="ext1 != null">
         #{ext1,jdbcType=VARCHAR},
       </if>
-      <if test="ext2 != null">
-        #{ext2,jdbcType=INTEGER},
+      <if test="residualSeats != null">
+        #{residualSeats,jdbcType=INTEGER},
       </if>
       <if test="insertTime != null">
         #{insertTime,jdbcType=TIMESTAMP},
@@ -147,8 +147,8 @@
       <if test="ext1 != null">
         EXT_1 = #{ext1,jdbcType=VARCHAR},
       </if>
-      <if test="ext2 != null">
-        EXT_2 = #{ext2,jdbcType=INTEGER},
+      <if test="residualSeats != null">
+        RESIDUAL_SEATS = #{residualSeats,jdbcType=INTEGER},
       </if>
       <if test="insertTime != null">
         INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
@@ -162,39 +162,39 @@
   <update id="updateByPrimaryKey" parameterType="com.airport.ticket.bms.entity.FlightMessage">
     update flight_message
     set FLIGHT_TIME = #{flightTime,jdbcType=TIMESTAMP},
-      COMPANY = #{company,jdbcType=VARCHAR},
-      ORIGIN = #{origin,jdbcType=VARCHAR},
-      DESTINATION = #{destination,jdbcType=VARCHAR},
-      SEATS = #{seats,jdbcType=INTEGER},
-      FLIGHT_PRICE = #{flightPrice,jdbcType=DECIMAL},
-      STATUS = #{status,jdbcType=BIT},
-      EXT_1 = #{ext1,jdbcType=VARCHAR},
-      EXT_2 = #{ext2,jdbcType=INTEGER},
-      INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
-      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    COMPANY = #{company,jdbcType=VARCHAR},
+    ORIGIN = #{origin,jdbcType=VARCHAR},
+    DESTINATION = #{destination,jdbcType=VARCHAR},
+    SEATS = #{seats,jdbcType=INTEGER},
+    FLIGHT_PRICE = #{flightPrice,jdbcType=DECIMAL},
+    STATUS = #{status,jdbcType=BIT},
+    EXT_1 = #{ext1,jdbcType=VARCHAR},
+    RESIDUAL_SEATS = #{residualSeats,jdbcType=INTEGER},
+    INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
+    UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=INTEGER}
   </update>
 
   <select id="fetchAllFlightMessage" resultMap="BaseResultMap">
-    SELECT * FROM flight_message
+    SELECT * FROM flight_message  AND STATUS = 1
   </select>
 
-    <select id="fetchPageFlightMessage" resultMap="BaseResultMap">
-        SELECT * FROM flight_message limit #{startNo},#{pageSize}
-    </select>
+  <select id="fetchPageFlightMessage" resultMap="BaseResultMap">
+    SELECT * FROM flight_message WHERE STATUS = 1 limit #{startNo},#{pageSize}
+  </select>
 
-    <select id="totalMessage" resultType="int">
-        SELECT COUNT(*) FROM flight_message
-    </select>
+  <select id="totalMessage" resultType="int">
+    SELECT COUNT(*) FROM flight_message WHERE STATUS = 1
+  </select>
 
   <select id="searchFlightMessage" resultMap="BaseResultMap">
     SELECT * FROM flight_message
-      WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date}
+    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date} AND STATUS = 1
   </select>
 
-    <select id="searchTotalMessage" resultType="int">
-        SELECT COUNT(*) FROM flight_message
-        WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date}
-    </select>
+  <select id="searchTotalMessage" resultType="int">
+    SELECT COUNT(*) FROM flight_message
+    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date} AND STATUS = 1
+  </select>
 
 </mapper>

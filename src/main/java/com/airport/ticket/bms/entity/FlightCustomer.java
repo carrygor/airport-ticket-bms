@@ -2,26 +2,26 @@ package com.airport.ticket.bms.entity;
 
 import java.util.Date;
 
-public class FlightMessage {
+public class FlightCustomer {
     private Integer id;
 
-    private Date flightTime;
-
-    private String company;
+    private String customerName;
 
     private String origin;
 
     private String destination;
 
-    private Integer seats;
+    private String flightCompany;
+
+    private Date flightTime;
 
     private Long flightPrice;
 
     private Boolean status;
 
-    private String ext1;
+    private String idcard;
 
-    private Integer residualSeats;
+    private Integer ext2;
 
     private Date insertTime;
 
@@ -35,20 +35,12 @@ public class FlightMessage {
         this.id = id;
     }
 
-    public Date getFlightTime() {
-        return flightTime;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setFlightTime(Date flightTime) {
-        this.flightTime = flightTime;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company == null ? null : company.trim();
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName == null ? null : customerName.trim();
     }
 
     public String getOrigin() {
@@ -67,12 +59,20 @@ public class FlightMessage {
         this.destination = destination == null ? null : destination.trim();
     }
 
-    public Integer getSeats() {
-        return seats;
+    public String getFlightCompany() {
+        return flightCompany;
     }
 
-    public void setSeats(Integer seats) {
-        this.seats = seats;
+    public void setFlightCompany(String flightCompany) {
+        this.flightCompany = flightCompany == null ? null : flightCompany.trim();
+    }
+
+    public Date getFlightTime() {
+        return flightTime;
+    }
+
+    public void setFlightTime(Date flightTime) {
+        this.flightTime = flightTime;
     }
 
     public Long getFlightPrice() {
@@ -91,20 +91,20 @@ public class FlightMessage {
         this.status = status;
     }
 
-    public String getExt1() {
-        return ext1;
+    public String getIdcard() {
+        return idcard;
     }
 
-    public void setExt1(String ext1) {
-        this.ext1 = ext1 == null ? null : ext1.trim();
+    public void setIdcard(String idcard) {
+        this.idcard = idcard == null ? null : idcard.trim();
     }
 
-    public Integer getResidualSeats() {
-        return residualSeats;
+    public Integer getExt2() {
+        return ext2;
     }
 
-    public void setResidualSeats(Integer residualSeats) {
-        this.residualSeats = residualSeats;
+    public void setExt2(Integer ext2) {
+        this.ext2 = ext2;
     }
 
     public Date getInsertTime() {

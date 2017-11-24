@@ -1,4 +1,6 @@
-package com.airport.ticket.bms.form;
+package com.airport.ticket.bms.form.message;
+
+import com.airport.ticket.bms.form.BaseForm;
 
 public class BaseLoginForm extends BaseForm {
     private String username;
