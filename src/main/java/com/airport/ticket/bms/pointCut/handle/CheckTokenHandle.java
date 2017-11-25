@@ -43,8 +43,8 @@ public class CheckTokenHandle implements MethodInterceptor {
         }
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String reqToken = request.getHeader("token");
-        String username = request.getHeader("username");
+        String username = request.getParameter("username");
+        String reqToken = request.getParameter("token");
 
         AdminUser user = adminUserDao.fetchAdminUserByUsername(username);
 

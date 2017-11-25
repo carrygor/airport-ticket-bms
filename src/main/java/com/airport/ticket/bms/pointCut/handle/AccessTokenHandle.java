@@ -42,8 +42,8 @@ public class AccessTokenHandle extends SuperController{
     @Around("@annotation(com.airport.ticket.bms.pointCut.AccessToken)")
     public Object doAccessCheck(ProceedingJoinPoint pjp) throws Throwable{
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String username = request.getHeader("username");
-        String reqToken = request.getHeader("token");
+        String username = request.getParameter("username");
+        String reqToken = request.getParameter("token");
 
         AdminUser adminUser = adminUserDao.fetchAdminUserByUsername(username);
 

@@ -10,7 +10,6 @@ import com.airport.ticket.bms.pointCut.AccessToken;
 import com.airport.ticket.bms.service.FlightCompanyService;
 import com.airport.ticket.bms.service.FlightMessageService;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

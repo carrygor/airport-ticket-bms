@@ -111,7 +111,6 @@ public class FlightMessageController extends SuperController {
             se.setErrMsg("不能删除该数据");
             throw se;
         }
-
         message.setStatus(false);
 
         boolean isSuccess= flightMessageService.updateFlightMessage(message);
