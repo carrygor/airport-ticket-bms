@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 @RequestMapping(value = "/flightcustomer")
 public class FlightCustomerController extends SuperController {
@@ -31,7 +30,7 @@ public class FlightCustomerController extends SuperController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlightCustomerController.class);
 
-    @ExceptionHandler
+    @ExceptionHandler(value = Exception.class)
     @Override
     public BaseResponse exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException {
         return super.exceptionRealHandler(request,response,exception);
@@ -78,11 +77,10 @@ public class FlightCustomerController extends SuperController {
     @RequestMapping(value = "/addflightcustomers",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
-    public BaseResponse addFlightCustomers(@Param("data") String reqJson) throws Exception {
+    public BaseResponse addFlightCustomers(FlightCustomerForm reqJson) throws Exception {
         BaseResponse response = new BaseResponse();
 
-        JSONArray object = JSONArray.fromObject(reqJson);
-        boolean isSuccess = flightCustomerService.addFlightCustomer(object);
+        boolean isSuccess = flightCustomerService.addFlightCustomer(reqJson);
 
         response.setErrCode(isSuccess?0:2);
         response.setErrMsg(isSuccess?"":"数据插进数据库失败！");

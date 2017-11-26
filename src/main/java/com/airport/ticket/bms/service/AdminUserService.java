@@ -17,7 +17,7 @@ public interface AdminUserService {
 
     Map<String,Object> searchAdminUser(String name, String wordId, String level) throws Exception;
 
-    boolean addAdminUser(JSONArray array) throws Exception;
+    boolean addAdminUser(AdminUserForm array) throws Exception;
 
     boolean updateAdminUser(AdminUser user) throws Exception;
 

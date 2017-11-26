@@ -189,12 +189,12 @@
 
   <select id="searchFlightMessage" resultMap="BaseResultMap">
     SELECT * FROM flight_message
-    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date} AND STATUS = 1
+    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{flightTime} AND STATUS = 1
   </select>
 
   <select id="searchTotalMessage" resultType="int">
     SELECT COUNT(*) FROM flight_message
-    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date} AND STATUS = 1
+    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{flightTime} AND STATUS = 1
   </select>
 
 </mapper>

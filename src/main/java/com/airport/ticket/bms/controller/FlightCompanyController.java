@@ -4,6 +4,7 @@ import com.airport.ticket.bms.ExceptionGMS.SystemException;
 import com.airport.ticket.bms.entity.FlightCompany;
 import com.airport.ticket.bms.entity.FlightMessage;
 import com.airport.ticket.bms.form.BasePageForm;
+import com.airport.ticket.bms.form.Customer.FlightCustomerForm;
 import com.airport.ticket.bms.form.company.CompanyForm;
 import com.airport.ticket.bms.model.BaseResponse;
 import com.airport.ticket.bms.pointCut.AccessToken;
@@ -25,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 @RequestMapping(value = "/company")
 public class FlightCompanyController extends SuperController {
@@ -80,11 +80,10 @@ public class FlightCompanyController extends SuperController {
     @RequestMapping(value = "/addcompanies",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
-    public BaseResponse addCompanies(@Param("data") String reqJson) throws Exception {
+    public BaseResponse addCompanies(CompanyForm reqJson) throws Exception {
         BaseResponse response = new BaseResponse();
 
-        JSONArray object = JSONArray.fromObject(reqJson);
-        boolean isSuccess = flightCompanyService.addCompanyMessage(object);
+        boolean isSuccess = flightCompanyService.addCompanyMessage(reqJson);
 
         response.setErrCode(isSuccess?0:2);
         response.setErrMsg(isSuccess?"":"数据插进数据库失败！");

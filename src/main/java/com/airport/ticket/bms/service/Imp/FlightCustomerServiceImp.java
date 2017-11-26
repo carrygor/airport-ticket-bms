@@ -60,47 +60,20 @@ public class FlightCustomerServiceImp implements FlightCustomerService {
     }
 
     @Transactional(rollbackFor=Exception.class)
-    public boolean addFlightCustomer(JSONArray array) throws Exception {
+    public boolean addFlightCustomer(FlightCustomerForm array) throws Exception {
 
-        JSONObject object = null;
-        List<FlightCustomer> customers = new ArrayList<FlightCustomer>();
+        FlightCustomer customer = new FlightCustomer();
+        customer.setCustomerName(array.getCustomerName());
+        customer.setDestination(array.getDestination());
+        customer.setFlightCompany(array.getCompany());
+        customer.setFlightPrice(array.getPrice());
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        customer.setFlightTime(array.getFlightTime());
+        customer.setIdcard(array.getIdCard());
+        customer.setOrigin(array.getOrigin());
+        customer.setStatus(array.isStatus());
 
-        for (int i=0;i<array.size();i++) {
-            String companyStr = array.getString(i);
-            object = JSONObject.fromObject(companyStr);
-
-            String[] parms = {KeyEnum.NAME.getValue(), KeyEnum.ORIGIN.getValue(), KeyEnum.DESTINATION.getValue(),
-                KeyEnum.COMPANY.getValue(), KeyEnum.FLIGHT_TIME.getValue(), KeyEnum.FLIGHT_PRICE.getValue(),
-                    KeyEnum.ID_CARD.getValue()
-            };
-
-            if (!this.validateParam(parms,object)){
-                SystemException se = new SystemException();
-                se.setErrCode(3);
-                se.setErrMsg("参数错误！");
-                throw  se;
-            }
-
-
-            FlightCustomer customer = new FlightCustomer();
-            customer.setCustomerName(JsonUtils.getNodeValue(companyStr, KeyEnum.NAME.getValue()));
-            customer.setDestination(JsonUtils.getNodeValue(companyStr, KeyEnum.DESTINATION.getValue()));
-            customer.setFlightCompany(JsonUtils.getNodeValue(companyStr, KeyEnum.COMPANY.getValue()));
-            customer.setFlightPrice(Long.parseLong(JsonUtils.getNodeValue(companyStr, KeyEnum.FLIGHT_PRICE.getValue())));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            customer.setFlightTime(sdf.parse(JsonUtils.getNodeValue(companyStr, KeyEnum.FLIGHT_TIME.getValue())));
-            customer.setIdcard(JsonUtils.getNodeValue(companyStr, KeyEnum.ID_CARD.getValue()));
-            customer.setOrigin(JsonUtils.getNodeValue(companyStr, KeyEnum.ORIGIN.getValue()));
-            boolean status = Boolean.parseBoolean(JsonUtils.getNodeValue(companyStr, KeyEnum.STATUS.getValue()));
-            customer.setStatus(status);
-
-            customers.add(customer);
-        }
-
-        int isSuccess = 1;
-        for (FlightCustomer customer:customers){
-            isSuccess = flightCustomerDao.insert(customer);
-        }
+        int isSuccess = flightCustomerDao.insert(customer);
         return isSuccess == 1 ? true :false;
     }
 

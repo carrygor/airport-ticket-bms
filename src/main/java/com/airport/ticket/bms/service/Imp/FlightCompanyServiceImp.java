@@ -4,6 +4,7 @@ import com.airport.ticket.bms.Enum.KeyEnum;
 import com.airport.ticket.bms.ExceptionGMS.SystemException;
 import com.airport.ticket.bms.dao.FlightCompanyDao;
 import com.airport.ticket.bms.entity.FlightCompany;
+import com.airport.ticket.bms.form.Customer.FlightCustomerForm;
 import com.airport.ticket.bms.form.company.CompanyForm;
 import com.airport.ticket.bms.service.FlightCompanyService;
 import net.sf.json.JSONArray;
@@ -46,6 +47,7 @@ public class FlightCompanyServiceImp implements FlightCompanyService {
             messages = flightCompanyDao.fetchPageFlightCompany((pageNo - 1) * pageSize,pageSize);
             totalPage = flightCompanyDao.totalCompany();
         } catch (Exception e){
+            e.printStackTrace();
             SystemException systemException = new SystemException();
             systemException.setErrCode(2);
             systemException.setErrMsg("数据库查询错误！");
@@ -59,37 +61,25 @@ public class FlightCompanyServiceImp implements FlightCompanyService {
     }
 
     @Transactional(rollbackFor=Exception.class)
-    public boolean addCompanyMessage(JSONArray array) throws Exception {
+    public boolean addCompanyMessage(CompanyForm array) throws Exception {
 
-        JSONObject object = null;
-        List<FlightCompany> companies = new ArrayList<FlightCompany>();
-
-        for (int i=0;i<array.size();i++) {
-            String companyStr = array.getString(i);
-            object = JSONObject.fromObject(companyStr);
-
-            if (!object.containsKey(KeyEnum.COMPANY_ADDRESS.getValue()) || !object.containsKey(KeyEnum.NAME.getValue()) ||
-                    !object.containsKey(KeyEnum.COMPANY_PHONE.getValue())){
-                SystemException se = new SystemException();
-                se.setErrCode(3);
-                se.setErrMsg("参数错误！");
-                throw  se;
-            }
-
-            FlightCompany company = new FlightCompany();
-            company.setAddress(object.getString(KeyEnum.COMPANY_ADDRESS.getValue()));
-            company.setName(object.getString(KeyEnum.NAME.getValue()));
-            company.setPhone(object.getString(KeyEnum.COMPANY_PHONE.getValue()));
-            company.setEmail(object.containsKey(KeyEnum.COMPANY_EMAIL.getValue())?
-                    object.getString(KeyEnum.COMPANY_EMAIL.getValue()):null);
-
-            companies.add(company);
+        List<FlightCompany> list = flightCompanyDao.fetchFlightCompanyByFullName(array.getName());
+        if (list.size() > 0){
+            SystemException se = new SystemException();
+            se.setErrCode(3);
+            se.setErrMsg("已存在该公司！");
+            throw  se;
         }
 
-        int isSuccess = 1;
-        for (FlightCompany company:companies){
-            isSuccess = flightCompanyDao.insert(company);
-        }
+        FlightCompany company = new FlightCompany();
+        company.setAddress(array.getAddress());
+        company.setName(array.getName());
+        company.setPhone(array.getPhone());
+        company.setEmail(array.getEmail());
+        company.setStatus(array.isStatus());
+
+
+        int isSuccess = flightCompanyDao.insert(company);
         return isSuccess == 1 ? true :false;
     }
 

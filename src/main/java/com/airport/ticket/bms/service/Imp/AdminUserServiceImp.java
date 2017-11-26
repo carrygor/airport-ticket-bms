@@ -107,53 +107,30 @@ public class AdminUserServiceImp implements AdminUserService {
 
 
     @Transactional(rollbackFor=Exception.class)
-    public boolean addAdminUser(JSONArray array) throws Exception {
-
-        JSONObject object = null;
-        List<AdminUser> users = new ArrayList<AdminUser>();
+    public boolean addAdminUser(AdminUserForm array) throws Exception {
 
         int count = adminUserDao.totalUser();
-        for (int i=0;i<array.size();i++){
-            String userStr = array.getString(i);
-            object = JSONObject.fromObject(userStr);
-
-            if (!object.containsKey(KeyEnum.USER_REALNAME.getValue()) || !object.containsKey(KeyEnum.USER_PASSWORD.getValue()) ||
-                    !object.containsKey(KeyEnum.NAME.getValue()) || !object.containsKey(KeyEnum.USER_PHONE.getValue()) ||
-                    !object.containsKey(KeyEnum.USER_EMAIL.getValue())){
-                SystemException se = new SystemException();
-                se.setErrCode(3);
-                se.setErrMsg("参数错误！");
-                throw  se;
-            }
-
-            //加上对是否有该成员的判断
-            //to do
-            AdminUser user = adminUserDao.fetchAdminUserByUsername(object.getString(KeyEnum.NAME.getValue()));
-            if (user != null){
-                SystemException se = new SystemException();
-                se.setErrCode(3);
-                se.setErrMsg("已存在该成员！");
-                throw  se;
-            }
 
 
-            AdminUser adminUser = new AdminUser();
-            adminUser.setUsername(object.getString(KeyEnum.NAME.getValue()));
-            adminUser.setRealname(object.getString(KeyEnum.USER_REALNAME.getValue()));
-            adminUser.setPassword(object.getString(KeyEnum.USER_PASSWORD.getValue()));
-            adminUser.setWorkId(10000+count++);
-            adminUser.setPhone(object.getString(object.getString(KeyEnum.USER_PHONE.getValue())));
-            adminUser.setEmail(object.getString(object.getString(KeyEnum.USER_EMAIL.getValue())));
-
-            users.add(user);
-
-
+        //加上对是否有该成员的判断
+        //to do
+        AdminUser user = adminUserDao.fetchAdminUserByUsername(array.getUsername());
+        if (user != null){
+            SystemException se = new SystemException();
+            se.setErrCode(3);
+            se.setErrMsg("已存在该成员！");
+            throw  se;
         }
 
-        int isSuccess = 1;
-        for (AdminUser message:users){
-            isSuccess = adminUserDao.insert(message);
-        }
+        AdminUser adminUser = new AdminUser();
+        adminUser.setUsername(array.getUsername());
+        adminUser.setRealname(array.getRealName());
+        adminUser.setPassword(array.getPassword());
+        adminUser.setWorkId(10000+count++);
+        adminUser.setPhone(array.getPhone());
+        adminUser.setEmail(array.getEmail());
+
+        int isSuccess = adminUserDao.insert(adminUser);
         return isSuccess == 1 ? true :false;
     }
 

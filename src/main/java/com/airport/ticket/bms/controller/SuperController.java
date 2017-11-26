@@ -10,14 +10,18 @@ import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-@Controller
+
+@ControllerAdvice
 public abstract class SuperController {
 
 
@@ -25,27 +29,33 @@ public abstract class SuperController {
 
     /**
      * 统一异常处理接口
-     * @param request
-     * @param response
-     * @param exception
-     */
-    public abstract BaseResponse exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException;
-
-    /**
-     * 统一异常处理
+     *
      * @param request
      * @param response
      * @param exception
      */
     @ExceptionHandler(value = Throwable.class)
-    public BaseResponse exceptionRealHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException {
+    @ResponseBody
+    public abstract BaseResponse exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException;
+
+    /**
+     * 统一异常处理
+     *
+     * @param request
+     * @param response
+     * @param exception
+     */
+    @ExceptionHandler(value = Throwable.class)
+    public @ResponseBody
+    BaseResponse exceptionRealHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException {
         BaseResponse baseResponse = new BaseResponse();
         //exception
 
-        LOGGER.error("统一异常处理：", exception);
+        ModelAndView mv = new ModelAndView();
+//        LOGGER.error("统一异常处理：" + exception);
 
 
-        if (exception instanceof BaseException){
+        if (exception instanceof BaseException) {
             BaseException baseException = (BaseException) exception;
             baseResponse.setErrCode(baseException.getErrCode());
             baseResponse.setErrMsg(baseException.getErrMsg());
@@ -53,6 +63,7 @@ public abstract class SuperController {
             baseResponse.setErrMsg(exception.getClass().getName());
             baseResponse.setErrCode(-1001);
         }
+        LOGGER.debug("返回的数据：" + baseResponse);
 
         response.setHeader(KeyEnum.ERROR_MSG.getValue(), baseResponse.getErrMsg());
         response.setIntHeader(KeyEnum.ERROR_CODE.getValue(), baseResponse.getErrCode());
@@ -60,7 +71,7 @@ public abstract class SuperController {
     }
 
 
-    protected int compareDate(Date dt1, Date dt2){
+    protected int compareDate(Date dt1, Date dt2) {
         if (dt1.getTime() > dt2.getTime()) {
             System.out.println("dt1 在dt2前");
             return 1;
@@ -78,7 +89,6 @@ public abstract class SuperController {
     }
 
 
-
     protected boolean validateParam(String[] params, JSONObject body) {
         try {
             for (int i = 0; i < params.length; i++) {
@@ -94,5 +104,4 @@ public abstract class SuperController {
         }
         return true;
     }
-
 }

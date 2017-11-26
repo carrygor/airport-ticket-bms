@@ -1,6 +1,7 @@
 package com.airport.ticket.bms.service;
 
 import com.airport.ticket.bms.entity.FlightCompany;
+import com.airport.ticket.bms.form.Customer.FlightCustomerForm;
 import com.airport.ticket.bms.form.company.CompanyForm;
 import net.sf.json.JSONArray;
 
@@ -15,7 +16,7 @@ public interface FlightCompanyService {
 
     Map<String,Object> fetchPageCompany(int pageNo, int pageSize) throws Exception;
 
-    boolean addCompanyMessage(JSONArray array) throws Exception;
+    boolean addCompanyMessage(CompanyForm array) throws Exception;
 
     boolean updateFlightCompany(FlightCompany company) throws Exception;
 

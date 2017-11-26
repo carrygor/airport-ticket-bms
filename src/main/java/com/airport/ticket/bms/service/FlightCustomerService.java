@@ -15,7 +15,7 @@ public interface FlightCustomerService {
 
     Map<String,Object> fetchPageFlightCustomer(int pageNo, int pageSize) throws Exception;
 
-    boolean addFlightCustomer(JSONArray array) throws Exception;
+    boolean addFlightCustomer(FlightCustomerForm array) throws Exception;
 
     boolean updateFlightCustomer(FlightCustomer customer) throws Exception;
 

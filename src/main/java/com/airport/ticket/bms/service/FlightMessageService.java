@@ -13,7 +13,7 @@ public interface FlightMessageService {
 
     Map<String,Object> searchFlightMessage(String company,String origin,String destination,String date) throws Exception;
 
-    boolean addFlightMessage(JSONArray array) throws Exception;
+    boolean addFlightMessage(BaseMessageForm array) throws Exception;
 
     boolean updateFlightMessage(FlightMessage message) throws Exception;
 

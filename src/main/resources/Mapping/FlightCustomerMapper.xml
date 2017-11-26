@@ -190,7 +190,7 @@
 
   <select id="searchFlightCustomers" resultMap="BaseResultMap">
     SELECT * FROM flight_customer
-    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{date} AND STATUS = 1
+    WHERE COMPANY LIKE #{company} AND ORIGIN LIKE #{origin} AND DESTINATION LIKE #{destination} AND FLIGHT_TIME LIKE #{flightTime} AND STATUS = 1
   </select>
 
     <select id="fetchFlightCustomerByName" resultMap="BaseResultMap">

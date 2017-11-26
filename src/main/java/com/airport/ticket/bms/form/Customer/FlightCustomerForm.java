@@ -1,17 +1,25 @@
 package com.airport.ticket.bms.form.Customer;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class FlightCustomerForm {
 
     private int id;
+    @NotNull
     private String customerName;
+    @NotNull
     private String origin;
+    @NotNull
     private String destination;
+    @NotNull
     private String company;
+    @NotNull
     private Date flightTime;
+    @NotNull
     private long price;
     private boolean status = true;
+    @NotNull
     private String idCard;
 
     public int getId() {

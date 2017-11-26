@@ -7,7 +7,6 @@ import com.airport.ticket.bms.form.message.BaseMessageForm;
 import com.airport.ticket.bms.model.BaseResponse;
 import com.airport.ticket.bms.pointCut.AccessToken;
 import com.airport.ticket.bms.service.FlightMessageService;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -28,7 +27,6 @@ import java.util.Map;
  * 关于航班信息的控制器
  */
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 public class FlightMessageController extends SuperController {
 
@@ -46,7 +44,7 @@ public class FlightMessageController extends SuperController {
      * 获取每一页的航班信息
      * @return
      */
-    @RequestMapping(value = "/pageMessage", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
+    @RequestMapping(value = "/flightmessage/pageMessage", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
     @AccessToken
     @ResponseBody
     public BaseResponse fetchPageMessage(BasePageForm form) throws Exception {
@@ -62,7 +60,7 @@ public class FlightMessageController extends SuperController {
     }
 
 
-    @RequestMapping(value = "/searchMessage",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/flightmessage/searchMessage",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @AccessToken
     @ResponseBody
     public BaseResponse searchFlightMessage(BaseMessageForm form) throws Exception {
@@ -72,7 +70,7 @@ public class FlightMessageController extends SuperController {
         String company = !"".equals(form.getCompany())? "%"+form.getCompany()+ "%": "%" ;
         String origin = !"".equals(form.getOrigin()) ? "%"+form.getOrigin()+"%": "%";
         String destination = !"".equals(form.getDestination())? "%"+ form.getDestination() + "%":"%";
-        String date = !"".equals(form.getDate())? form.getDate()+"%":"%";
+        String date = !"".equals(form.getFlightTime())? form.getFlightTime()+"%":"%";
 
         Map<String,Object> map = flightMessageService.searchFlightMessage(company,origin,destination,date);
 
@@ -80,14 +78,13 @@ public class FlightMessageController extends SuperController {
         return response;
     }
 
-    @RequestMapping(value = "/addMessages",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/flightmessage/addMessages",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
-    public BaseResponse addFlightMessages(@Param("data") String reqJson) throws Exception {
+    public BaseResponse addFlightMessages(BaseMessageForm reqJson) throws Exception {
         BaseResponse response = new BaseResponse();
 
-        JSONArray object = JSONArray.fromObject(reqJson);
-        boolean isSuccess = flightMessageService.addFlightMessage(object);
+        boolean isSuccess = flightMessageService.addFlightMessage(reqJson);
 
         response.setErrCode(isSuccess?0:2);
         response.setErrMsg(isSuccess?"":"数据插进数据库失败！");
@@ -97,7 +94,7 @@ public class FlightMessageController extends SuperController {
         return response;
     }
 
-    @RequestMapping(value = "/removeMessages",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/flightmessage/removeMessages",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
     public BaseResponse removeFlightMessages(@Param("id")int id) throws Exception {
@@ -123,7 +120,7 @@ public class FlightMessageController extends SuperController {
     }
 
 
-    @RequestMapping(value = "/updateMessages",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/flightmessage/updateMessages",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
     public BaseResponse updateFlightMessages(BaseMessageForm form) throws Exception {
@@ -144,7 +141,7 @@ public class FlightMessageController extends SuperController {
 
 
 
-    @RequestMapping(value = "/test",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/flightmessage/test",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     public BaseResponse test(){
         JSONObject object = new JSONObject();

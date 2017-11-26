@@ -2,18 +2,23 @@ package com.airport.ticket.bms.form.message;
 
 import com.airport.ticket.bms.form.BaseForm;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 public class BaseMessageForm extends BaseForm implements Serializable{
 
     private int id;
+    @NotNull
     private String company;
+    @NotNull
     private String origin;
+    @NotNull
     private String destination;
-    private Date date;
+    @NotNull
+    private Date flightTime;
     private int seats;
-    private int residualSeats;
+    private int residualSeats = 0;
     private long price;
     private boolean status = true;
 
@@ -73,12 +78,12 @@ public class BaseMessageForm extends BaseForm implements Serializable{
         this.destination = destination;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getFlightTime() {
+        return flightTime;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setFlightTime(Date flightTime) {
+        this.flightTime = flightTime;
     }
 
     public long getPrice() {

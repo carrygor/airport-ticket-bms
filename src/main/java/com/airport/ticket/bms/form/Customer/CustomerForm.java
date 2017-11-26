@@ -2,14 +2,18 @@ package com.airport.ticket.bms.form.Customer;
 
 import com.airport.ticket.bms.form.BaseForm;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class CustomerForm extends BaseForm implements Serializable {
     private int id;
+    @NotNull
     private String name;
+    @NotNull
     private String idCard;
     private String phone;
     private String householdRegister;
+    @NotNull
     private String email;
     private String address;
     private boolean status = true;

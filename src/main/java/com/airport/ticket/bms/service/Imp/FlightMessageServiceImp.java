@@ -1,16 +1,12 @@
 package com.airport.ticket.bms.service.Imp;
 
-import com.airport.ticket.bms.Enum.KeyEnum;
 import com.airport.ticket.bms.ExceptionGMS.SystemException;
 import com.airport.ticket.bms.dao.FlightCompanyDao;
 import com.airport.ticket.bms.dao.FlightMessageDao;
-import com.airport.ticket.bms.entity.CustomerList;
 import com.airport.ticket.bms.entity.FlightCompany;
 import com.airport.ticket.bms.entity.FlightMessage;
 import com.airport.ticket.bms.form.message.BaseMessageForm;
 import com.airport.ticket.bms.service.FlightMessageService;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,51 +66,30 @@ public class FlightMessageServiceImp implements FlightMessageService{
 
 
     @Transactional(rollbackFor=Exception.class)
-    public boolean addFlightMessage(JSONArray array) throws Exception {
+    public boolean addFlightMessage(BaseMessageForm array) throws Exception {
 
-        JSONObject object = null;
-        List<FlightMessage> messages = new ArrayList<FlightMessage>();
-
-        for (int i=0;i<array.size();i++){
-            String messageStr = array.getString(i);
-            object = JSONObject.fromObject(messageStr);
-
-            if (!object.containsKey(KeyEnum.COMPANY.getValue()) || !object.containsKey(KeyEnum.ORIGIN.getValue()) ||
-                    !object.containsKey(KeyEnum.DESTINATION.getValue()) || !object.containsKey(KeyEnum.SEATS.getValue()) ||
-                            !object.containsKey(KeyEnum.FLIGHT_PRICE) || object.containsKey(KeyEnum.FLIGHT_TIME.getValue())){
-                SystemException se = new SystemException();
-                se.setErrCode(3);
-                se.setErrMsg("参数错误！");
-                throw  se;
-            }
-
-            //加上对是否有该航空公司的判断
+        //加上对是否有该航空公司的判断
 //            to do
-            List<FlightCompany> companies = flightCompanyDao.fetchFlightCompanyByFullName(object.getString(KeyEnum.COMPANY.getValue()));
-            if (companies.size() <= 0){
-                SystemException se = new SystemException();
-                se.setErrCode(3);
-                se.setErrMsg("不存在该公司！");
-                throw  se;
-            }
-
-            FlightMessage message = new FlightMessage();
-            message.setSeats(object.getInt(String.valueOf(object.getInt(KeyEnum.SEATS.getValue()))));
-            message.setFlightPrice(object.getLong(KeyEnum.FLIGHT_PRICE.getValue()));
-            message.setOrigin(object.getString(KeyEnum.ORIGIN.getValue()));
-            message.setDestination(object.getString(KeyEnum.DESTINATION.getValue()));
-            message.setFlightTime((Date) object.get(KeyEnum.FLIGHT_TIME.getValue()));
-            message.setCompany(object.getString(KeyEnum.COMPANY.getValue()));
-            message.setResidualSeats(object.containsKey(KeyEnum.RESIDUAL_SEATS.getValue())?
-                    object.getInt(KeyEnum.RESIDUAL_SEATS.getValue()):message.getSeats());
-
-            messages.add(message);
+        List<FlightCompany> companies = flightCompanyDao.fetchFlightCompanyByFullName(array.getCompany());
+        if (companies.size() <= 0){
+            SystemException se = new SystemException();
+            se.setErrCode(3);
+            se.setErrMsg("不存在该公司！");
+            throw  se;
         }
 
-        int isSuccess = 1;
-        for (FlightMessage message:messages){
-            isSuccess = flightMessageDao.insert(message);
-        }
+        FlightMessage message = new FlightMessage();
+        message.setSeats(array.getSeats());
+        message.setFlightPrice(array.getPrice());
+        message.setOrigin(array.getOrigin());
+        message.setDestination(array.getDestination());
+        message.setFlightTime(array.getFlightTime());
+        message.setCompany(array.getCompany());
+        message.setResidualSeats(array.getResidualSeats() == 0?array.getSeats():array.getResidualSeats());
+        message.setStatus(array.isStatus());
+
+
+        int isSuccess =  flightMessageDao.insert(message);
         return isSuccess == 1 ? true :false;
     }
 
@@ -125,7 +100,7 @@ public class FlightMessageServiceImp implements FlightMessageService{
     public boolean updateFlightMessage(BaseMessageForm form) throws Exception{
         FlightMessage message = new FlightMessage();
         message.setCompany(form.getCompany());
-        message.setFlightTime(form.getDate());
+        message.setFlightTime(form.getFlightTime());
         message.setDestination(form.getDestination());
         message.setOrigin(form.getOrigin());
         message.setFlightPrice(form.getPrice());

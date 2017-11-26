@@ -2,15 +2,22 @@ package com.airport.ticket.bms.form.adminUser;
 
 import com.airport.ticket.bms.form.BaseForm;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class AdminUserForm extends BaseForm implements Serializable{
+
     private int id;
+    @NotNull
     private String username;
+    @NotNull
     private String realName;
     private int workId;
+    @NotNull
     private String password;
+    @NotNull
     private String email;
+    @NotNull
     private String phone;
     private boolean level;
     private boolean status = true;

@@ -2,6 +2,7 @@ package com.airport.ticket.bms.service;
 
 import com.airport.ticket.bms.entity.CustomerList;
 import com.airport.ticket.bms.form.Customer.CustomerForm;
+import com.airport.ticket.bms.form.company.CompanyForm;
 import net.sf.json.JSONArray;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +19,7 @@ public interface CustomerListService {
 
     Map<String,Object> fetchPageCustomer(int pageNo, int pageSize) throws Exception;
 
-    boolean addCustomerMessage(JSONArray array) throws Exception;
+    boolean addCustomerMessage(CustomerForm array) throws Exception;
 
     boolean updateCustomer(CustomerList customerList) throws Exception;
 

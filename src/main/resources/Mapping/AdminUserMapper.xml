@@ -138,19 +138,19 @@
   </update>
   
   <select id="fetchAdminUserByUsername" resultMap="BaseResultMap">
-    SELECT * FROM admin_user WHERE USERNAME = #{username}
+    SELECT * FROM admin_user WHERE USERNAME = #{username} AND STATUS = 1
   </select>
 
   <select id="searchAdminUser" resultMap="BaseResultMap">
-    SELECT * FROM admin_user WHERE USERNAME LIKE #{name} AND WORK_ID LIKE #{word_id} AND LEVEL LIKE #{level}
+    SELECT * FROM admin_user WHERE USERNAME LIKE #{name} AND WORK_ID LIKE #{word_id} AND LEVEL LIKE #{level} AND STATUS = 1
   </select>
 
   <select id="totalUser" resultType="int">
-    SELECT COUNT(*) FROM admin_user
+    SELECT COUNT(*) FROM admin_user WHERE STATUS = 1
   </select>
 
   <select id="fetchPageAdminUser" resultMap="BaseResultMap">
-    SELECT * FROM admin_user limit #{startNo},#{pageSize}
+    SELECT * FROM admin_user WHERE STATUS = 1 limit #{startNo},#{pageSize}
   </select>
 
   

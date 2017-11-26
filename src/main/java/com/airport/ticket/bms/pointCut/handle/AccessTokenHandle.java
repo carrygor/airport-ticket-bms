@@ -69,7 +69,7 @@ public class AccessTokenHandle extends SuperController{
         return object;
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(Exception.class)
     @Override
     public BaseResponse exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException {
         return super.exceptionRealHandler(request,response,exception);

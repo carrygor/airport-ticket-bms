@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,9 +25,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
-@Controller
-@RequestMapping(value = "/user")
+@RestController
 public class AdminUserController extends SuperController{
 
     @Autowired
@@ -36,11 +35,11 @@ public class AdminUserController extends SuperController{
 
     @ExceptionHandler
     @Override
-    public BaseResponse exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException {
+    public BaseResponse exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) throws IOException{
         return super.exceptionRealHandler(request,response,exception);
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
+    @RequestMapping(value = "/user/login", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
     @ResponseBody
     public BaseResponse login(BaseLoginForm form) throws Exception{
         String username = form.getUsername();
@@ -57,7 +56,7 @@ public class AdminUserController extends SuperController{
         return response;
     }
 
-    @RequestMapping(value = "/searchadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/user/searchadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @AccessToken
     @ResponseBody
     public BaseResponse searchAdminUser(@Param("username") String name,@Param("word_id")String word_id,@Param("level")String level)
@@ -75,10 +74,10 @@ public class AdminUserController extends SuperController{
     }
 
 
-    @RequestMapping(value = "/addadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/user/addadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
-    public BaseResponse addAminUser(@Param("data") String form) throws Exception{
+    public BaseResponse addAdminUser(AdminUserForm form) throws Exception{
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         AdminUser user = (AdminUser) request.getAttribute(KeyEnum.USER.getValue());
 
@@ -89,8 +88,7 @@ public class AdminUserController extends SuperController{
 
         BaseResponse response = new BaseResponse();
 
-        JSONArray json = JSONArray.fromObject(form);
-        boolean isSuccess = adminUserService.addAdminUser(json);
+        boolean isSuccess = adminUserService.addAdminUser(form);
 
         response.setErrCode(isSuccess?0:2);
         response.setErrMsg(isSuccess?"":"数据插进数据库失败！");
@@ -100,7 +98,7 @@ public class AdminUserController extends SuperController{
         return response;
     }
 
-    @RequestMapping(value = "/removeadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/user/removeadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
     public BaseResponse removeFlightMessages(@Param("id")int id) throws Exception {
@@ -118,7 +116,7 @@ public class AdminUserController extends SuperController{
         return response;
     }
 
-    @RequestMapping(value = "/updateadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
+    @RequestMapping(value = "/user/updateadminuser",method = RequestMethod.POST,produces = "text/json;charset=utf-8")
     @ResponseBody
     @AccessToken
     public BaseResponse updateFlightMessages(AdminUserForm form) throws Exception {
@@ -133,8 +131,9 @@ public class AdminUserController extends SuperController{
         return response;
     }
 
-    @RequestMapping(value = "/pageadminuser", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
-    @AccessToken
+
+    @RequestMapping(value = "/user/pageadminuser", method = RequestMethod.POST,produces = "text/json;charset=UTF-8")
+//    @AccessToken
     @ResponseBody
     public BaseResponse fetchCustomerList(BasePageForm form) throws Exception {
 

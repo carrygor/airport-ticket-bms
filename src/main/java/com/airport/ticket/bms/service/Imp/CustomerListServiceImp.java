@@ -5,6 +5,7 @@ import com.airport.ticket.bms.ExceptionGMS.SystemException;
 import com.airport.ticket.bms.dao.CustomerListDao;
 import com.airport.ticket.bms.entity.CustomerList;
 import com.airport.ticket.bms.form.Customer.CustomerForm;
+import com.airport.ticket.bms.form.company.CompanyForm;
 import com.airport.ticket.bms.service.CustomerListService;
 import com.airport.ticket.bms.util.JsonUtils;
 import net.sf.json.JSONArray;
@@ -50,50 +51,29 @@ public class CustomerListServiceImp implements CustomerListService{
     }
 
     @Transactional(rollbackFor=Exception.class)
-    public boolean addCustomerMessage(JSONArray array) throws Exception {
-
-
-        JSONObject object = null;
-        List<CustomerList> lists = new ArrayList<CustomerList>();
-
-        for (int i=0;i<array.size();i++){
-            String listStr = array.getString(i);
-            object = JSONObject.fromObject(listStr);
-
-            if (!object.containsKey(KeyEnum.USER_EMAIL.getValue()) || !object.containsKey(KeyEnum.NAME.getValue()) ||
-                    !object.containsKey(KeyEnum.ID_CARD.getValue())){
-                SystemException se = new SystemException();
-                se.setErrCode(3);
-                se.setErrMsg("参数错误！");
-                throw  se;
-            }
+    public boolean addCustomerMessage(CustomerForm array) throws Exception {
 
             //加上对是否有该该客户航空公司的判断
             //to do
-            CustomerList list = customerListDao.fetchCustomerByIdCard(object.getString(KeyEnum.ID_CARD.getValue()));
+            CustomerList list = customerListDao.fetchCustomerByIdCard(array.getIdCard());
             if (list != null){
                 SystemException se = new SystemException();
                 se.setErrCode(3);
-                se.setErrMsg("已存在该公司！");
+                se.setErrMsg("已存在该客户！");
                 throw  se;
             }
 
             CustomerList customer = new CustomerList();
-            customer.setAddress(JsonUtils.getNodeValue(listStr, KeyEnum.COMPANY_ADDRESS.getValue()));
-            customer.setEmail(JsonUtils.getNodeValue(listStr, KeyEnum.USER_EMAIL.getValue()));
-            customer.setHouseholdRegister(JsonUtils.getNodeValue(listStr, KeyEnum.HOUSEHOLD_RESGFITER.getValue()));
-            customer.setIdcard(JsonUtils.getNodeValue(listStr, KeyEnum.ID_CARD.getValue()));
-            customer.setName(JsonUtils.getNodeValue(listStr, KeyEnum.NAME.getValue()));
-            customer.setPhone(JsonUtils.getNodeValue(listStr, KeyEnum.USER_PHONE.getValue()));
-            customer.setStatus(Boolean.parseBoolean(JsonUtils.getNodeValue(listStr, KeyEnum.STATUS.getValue())));
+            customer.setAddress(array.getAddress());
+            customer.setEmail(array.getEmail());
+            customer.setHouseholdRegister(array.getHouseholdRegister());
+            customer.setIdcard(array.getIdCard());
+            customer.setName(array.getName());
+            customer.setPhone(array.getPhone());
+            customer.setStatus(array.getStatus());
 
-            lists.add(customer);
-        }
 
-        int isSuccess = 1;
-        for (CustomerList list:lists){
-            isSuccess = customerListDao.insert(list);
-        }
+        int isSuccess = customerListDao.insert(list);
         return isSuccess == 1 ? true :false;
 
     }
